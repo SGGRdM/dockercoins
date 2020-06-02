@@ -3,10 +3,16 @@
 #      SPDX-License-Identifier:  GPL-2.0-only                           #
 #########################################################################
 ---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: blue
+---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: rng
+  namespace: blue
 spec:
   selector:
     matchLabels:
@@ -18,15 +24,16 @@ spec:
     spec:
       containers:
       -
-        image: secobau/dockercoins:rng-1.1
+        image: secobau/dockercoins-rng:release-1.1
         name: rng
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hasher
+  namespace: blue
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       service: hasher
@@ -37,13 +44,14 @@ spec:
     spec:
       containers:
       -
-        image: secobau/dockercoins:hasher-1.3
+        image: secobau/dockercoins-hasher:release-1.1
         name: hasher
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
+  namespace: blue
 spec:
   replicas: 1
   selector:
@@ -63,6 +71,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webui
+  namespace: blue
 spec:
   replicas: 1
   selector:
@@ -75,15 +84,16 @@ spec:
     spec:
       containers:
       -
-        image: secobau/dockercoins:webui-1.3
+        image: secobau/dockercoins-webui:release-1.1
         name: webui
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: worker
+  namespace: blue
 spec:
-  replicas: 3
+  replicas: 6
   selector:
     matchLabels:
       service: worker
@@ -94,13 +104,14 @@ spec:
     spec:
       containers:
       -
-        image: secobau/dockercoins:worker-1.0
+        image: secobau/dockercoins-worker:release-1.1
         name: worker
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: hasher
+  namespace: blue
 spec:
   ports:
   - port: 80
@@ -111,6 +122,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: redis
+  namespace: blue
 spec:
   ports:
   - port: 6379
@@ -121,6 +133,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: rng
+  namespace: blue
 spec:
   ports:
   - port: 80
@@ -131,10 +144,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: webui
+  namespace: blue
 spec:
   ports:
   -
-    nodePort: 30001
+    nodePort: 31001
     port: 80
   selector:
     service: webui

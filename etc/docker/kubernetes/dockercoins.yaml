@@ -3,11 +3,6 @@
 #      SPDX-License-Identifier:  GPL-2.0-only                           #
 #########################################################################
 ---
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: blue
----
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -148,10 +143,8 @@ metadata:
 spec:
   ports:
   -
-    nodePort: 31001
     port: 80
   selector:
     service: webui
-  type: NodePort
 ---
 #########################################################################
